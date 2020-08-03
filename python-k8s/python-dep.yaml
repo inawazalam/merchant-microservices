@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python
+  template:
+    metadata:
+      labels:
+        app: python
+    spec:
+      containers:
+      - name: python
+        image: localhost:5000/python-final:v1
+        imagePullPolicy: Always
+        env:
+        - name: DB_HOST
+          value: "postgres-service"
+        - name: DB_PORT  
+          value: "5432"
+        - name: GCP_BUCKET_NAME
+          value: "traceable"
+#        - name: DB_PASSWORD
+#          value: "root"
+        - name: DB_NAME
+          valueFrom:
+             secretKeyRef:
+              name: py-secret
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+             secretKeyRef:
+              name: py-secret
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+             secretKeyRef:
+              name: py-secret
+              key: DB_PASSWORD              
+        - name: JWT_SECRET
+          valueFrom:
+             secretKeyRef:
+              name: py-secret
+              key: JWT_SECRET
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          valueFrom:
+             secretKeyRef:
+              name: py-secret
+              key: GOOGLE_APPLICATION_CREDENTIALS  
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: "256m"
+          requests:
+            cpu: 256m
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10

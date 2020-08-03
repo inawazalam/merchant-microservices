@@ -1,0 +1,22 @@
+venv
+migrations
+
+#database file
+db.sqlite3
+
+#environment variable file
+.env
+
+#editor files
+.idea
+__pycache__
+*.pyc
+
+commands.txt
+
+#coverage reports
+.coverage
+htmlcov
+
+#lint file
+.pylintrc
